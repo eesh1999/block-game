@@ -196,8 +196,23 @@ body::after{
 .cell.filled.c6{background:linear-gradient(155deg,#FF75C0,#FF2090,#CC0060);box-shadow:var(--dp) var(--dp) 0 #C01870,calc(var(--dp)+1px) calc(var(--dp)+1px) 0 #880048,0 2px 10px rgba(255,61,160,0.3);}
 .cell.filled.c7{background:linear-gradient(155deg,#40E0EE,#00AACC,#007A90);box-shadow:var(--dp) var(--dp) 0 #007A8E,calc(var(--dp)+1px) calc(var(--dp)+1px) 0 #004A58,0 2px 10px rgba(0,188,212,0.3);}
 
-.cell.pv{background:rgba(0,0,0,0.07)!important;border:2px dashed rgba(0,0,0,0.28)!important;box-shadow:none!important;transform:translateY(-1px)!important;}
-.cell.px{background:rgba(220,0,0,0.1)!important;border:2px dashed rgba(200,0,0,0.45)!important;box-shadow:none!important;transform:none!important;}
+/* ── PREVIEW: bold visible fill so player always sees landing zone ── */
+@keyframes pvPulse{0%,100%{opacity:0.82;}50%{opacity:1;}}
+.cell.pv{
+  background:rgba(80,180,80,0.28)!important;
+  border:2.5px solid rgba(0,160,60,0.7)!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,0.5),0 0 0 2px rgba(0,160,60,0.2)!important;
+  transform:translateY(-2px)!important;
+  animation:pvPulse .6s ease-in-out infinite!important;
+  z-index:6!important;
+}
+.cell.px{
+  background:rgba(220,50,50,0.18)!important;
+  border:2.5px solid rgba(200,0,0,0.55)!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,0.3)!important;
+  transform:none!important;
+  z-index:6!important;
+}
 
 /* ── ANIMATIONS ── */
 @keyframes blockBounce{
@@ -286,21 +301,22 @@ body::after{
 #ghost{
   position:fixed;pointer-events:none;z-index:9999;
   display:none;
-  /* On mobile ghost floats ABOVE finger — offset applied in JS */
   transform:translate(-50%,-50%);
-  filter:drop-shadow(0 8px 18px rgba(90,50,20,0.28));
+  /* Semi-transparent so the grid preview shows through */
+  opacity:0.72;
+  filter:drop-shadow(0 6px 14px rgba(90,50,20,0.25));
 }
 .gg{display:grid;gap:4px;}
 .gcx{border-radius:6px;position:relative;transform:translateY(-2px);}
 .gcx::before{content:'';position:absolute;top:0;left:0;right:0;height:42%;background:linear-gradient(180deg,rgba(255,255,255,0.5),transparent);border-radius:6px 6px 0 0;z-index:1;pointer-events:none;}
-.gcx.g0{background:linear-gradient(155deg,#FF6060,#FF2424);box-shadow:5px 5px 0 #C01818,0 3px 14px rgba(255,59,59,0.25);}
-.gcx.g1{background:linear-gradient(155deg,#FFA040,#FF7000);box-shadow:5px 5px 0 #C45500,0 3px 14px rgba(255,122,0,0.25);}
-.gcx.g2{background:linear-gradient(155deg,#FFE840,#FFD000);box-shadow:5px 5px 0 #C9A800,0 3px 14px rgba(255,214,0,0.25);}
-.gcx.g3{background:linear-gradient(155deg,#40E878,#00C040);box-shadow:5px 5px 0 #008A38,0 3px 14px rgba(0,200,83,0.25);}
-.gcx.g4{background:linear-gradient(155deg,#40B8FF,#007EEE);box-shadow:5px 5px 0 #005FCC,0 3px 14px rgba(0,145,255,0.25);}
-.gcx.g5{background:linear-gradient(155deg,#C070FF,#8B28F0);box-shadow:5px 5px 0 #6A1FCC,0 3px 14px rgba(155,63,255,0.25);}
-.gcx.g6{background:linear-gradient(155deg,#FF75C0,#FF2090);box-shadow:5px 5px 0 #C01870,0 3px 14px rgba(255,61,160,0.25);}
-.gcx.g7{background:linear-gradient(155deg,#40E0EE,#00AACC);box-shadow:5px 5px 0 #007A90,0 3px 14px rgba(0,188,212,0.25);}
+.gcx.g0{background:linear-gradient(155deg,#FF6060,#FF2424);box-shadow:5px 5px 0 #C01818;}
+.gcx.g1{background:linear-gradient(155deg,#FFA040,#FF7000);box-shadow:5px 5px 0 #C45500;}
+.gcx.g2{background:linear-gradient(155deg,#FFE840,#FFD000);box-shadow:5px 5px 0 #C9A800;}
+.gcx.g3{background:linear-gradient(155deg,#40E878,#00C040);box-shadow:5px 5px 0 #008A38;}
+.gcx.g4{background:linear-gradient(155deg,#40B8FF,#007EEE);box-shadow:5px 5px 0 #005FCC;}
+.gcx.g5{background:linear-gradient(155deg,#C070FF,#8B28F0);box-shadow:5px 5px 0 #6A1FCC;}
+.gcx.g6{background:linear-gradient(155deg,#FF75C0,#FF2090);box-shadow:5px 5px 0 #C01870;}
+.gcx.g7{background:linear-gradient(155deg,#40E0EE,#00AACC);box-shadow:5px 5px 0 #007A90;}
 
 /* ═══ SCORE POP ═══ */
 @keyframes spf{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-65px) scale(1.4);}}
@@ -410,7 +426,7 @@ body::after{
 //  Calculates: cell size, tray card size
 // ═══════════════════════════════════════
 const ROWS=7, COLS=7;
-let isMobile=false, CS=40, TRAY_SZ=88, GHOST_LIFT=0;
+let isMobile=false, CS=40, TRAY_SZ=88;
 
 function calcLayout(){
   const vw=window.innerWidth, vh=window.innerHeight;
@@ -446,7 +462,6 @@ function calcLayout(){
 
     // Tray card fits 3 across with gaps
     TRAY_SZ=Math.max(68, Math.min(90, Math.floor((availW - 40) / 3)));
-    GHOST_LIFT = CS * 2.2; // ghost floats well above thumb
 
   } else {
     // Side-by-side: grid left, tray column right
@@ -468,7 +483,6 @@ function calcLayout(){
     CS=Math.max(28, Math.min(maxByH, maxByW, 52));
 
     TRAY_SZ=Math.max(82, Math.min(106, Math.floor((availH - 2*20) / 3)));
-    GHOST_LIFT = 0; // no lift on desktop
   }
 
   // Apply depth proportional to cell size
@@ -694,29 +708,45 @@ function buildGhost(){
 
 function moveGhost(cx,cy,isTouch){
   const g=document.getElementById('ghost');
-  // On mobile: lift ghost above finger so it's visible
-  const liftY=isTouch ? GHOST_LIFT : 0;
-  g.style.left=cx+'px';
-  g.style.top=(cy - liftY)+'px';
+  const p=drag;
+  const rows=p.s.length, cols=p.s[0].length;
+  const pieceW=(cols*(CS+4))-4;
+  const pieceH=(rows*(CS+4))-4;
+  // Ghost center aligns with finger/cursor — no lift needed.
+  // On touch: shift piece up by half its height + a small thumb clearance
+  // so finger sits at the bottom-centre of the piece, making it easy to aim.
+  const thumbOffset = isTouch ? Math.round(pieceH * 0.5 + 14) : 0;
+  g.style.left = cx + 'px';
+  g.style.top  = (cy - thumbOffset) + 'px';
+  // transform: translate(-50%, -50%) already centres the ghost on the point
 }
 
-function gridCoord(cx,cy,isTouch){
+function gridCoord(cx,cy){
   const rect=document.getElementById('grid').getBoundingClientRect();
   const step=CS+4;
-  // Compensate for ghost lift: the drop target is at the actual finger position
-  const actualY=isTouch ? cy : cy;
+  // cx,cy is always the raw finger/cursor position
   return{
-    r: Math.floor((actualY - rect.top - 8) / step),
+    r: Math.floor((cy - rect.top  - 8) / step),
     c: Math.floor((cx - rect.left - 8) / step)
   };
 }
 
 function pieceOrigin(cx,cy,isTouch){
-  const{r,c}=gridCoord(cx,cy,isTouch);
-  return{
-    gr: r - Math.floor(drag.s.length/2),
-    gc: c - Math.floor(drag.s[0].length/2)
-  };
+  const{r,c}=gridCoord(cx,cy);
+  const rows=drag.s.length, cols=drag.s[0].length;
+  if(isTouch){
+    // Finger at bottom-centre of piece: anchor bottom row, centre column
+    return{
+      gr: r - (rows - 1),
+      gc: c - Math.floor(cols / 2)
+    };
+  } else {
+    // Cursor at centre of piece
+    return{
+      gr: r - Math.floor(rows / 2),
+      gc: c - Math.floor(cols / 2)
+    };
+  }
 }
 
 function canPlace(s,gr,gc){
